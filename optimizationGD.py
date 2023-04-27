@@ -155,51 +155,82 @@ def get_loss(lineage, realimage):
     # print("Before gradient descent the objective function value is:", loss)
     return loss
 
+def show_synth_real(lineage, realimage):
+    synthimage, _ = optimization.generate_synthetic_image(lineage.frames[0].nodes, shape, lineage.frames[0].simulation_config)
+    _, ax = plt.subplots(1,2)
+    ax[0].imshow(synthimage, cmap="gray")
+    ax[1].imshow(realimage,cmap="gray")
+    plt.show()
+
 def get_gradient(lineage, realimage):
     lineage_copy = deepcopy(lineage)
-    gradient = [0]*5
+    cell_cnt = len(lineage_copy.frames[0].nodes)
+    gradient = [[0]*5 for i in range(cell_cnt)]
 
     delta = 0.1
     
-    f0 = get_loss(lineage_copy, realimage)
-    lineage_copy.frames[0].nodes[0].cell.x += delta
-    f1 = get_loss(lineage_copy, realimage)
-    gradient[0] = (f1 - f0) / delta
-    lineage_copy.frames[0].nodes[0].cell.x -= delta
+    for i in range(cell_cnt):
+        f0 = get_loss(lineage_copy, realimage)
+        lineage_copy.frames[0].nodes[i].cell.x += delta
+        f1 = get_loss(lineage_copy, realimage)
+        gradient[i][0] = (f1 - f0) / delta
+        lineage_copy.frames[0].nodes[i].cell.x -= delta
 
-    f0 = get_loss(lineage_copy, realimage)
-    lineage_copy.frames[0].nodes[0].cell.y += delta
-    f1 = get_loss(lineage_copy, realimage)
-    gradient[1] = (f1 - f0) / delta
-    lineage_copy.frames[0].nodes[0].cell.y -= delta
+        f0 = get_loss(lineage_copy, realimage)
+        lineage_copy.frames[0].nodes[i].cell.y += delta
+        f1 = get_loss(lineage_copy, realimage)
+        gradient[i][1] = (f1 - f0) / delta
+        lineage_copy.frames[0].nodes[i].cell.y -= delta
 
-    f0 = get_loss(lineage_copy, realimage)
-    lineage_copy.frames[0].nodes[0].cell.rotation += delta
-    f1 = get_loss(lineage_copy, realimage)
-    gradient[2] = (f1 - f0) / delta
-    lineage_copy.frames[0].nodes[0].cell.rotation -= delta
+        f0 = get_loss(lineage_copy, realimage)
+        lineage_copy.frames[0].nodes[i].cell.rotation += delta
+        f1 = get_loss(lineage_copy, realimage)
+        gradient[i][2] = (f1 - f0) / delta
+        lineage_copy.frames[0].nodes[i].cell.rotation -= delta
 
-    f0 = get_loss(lineage_copy, realimage)
-    lineage_copy.frames[0].nodes[0].cell.length += delta
-    f1 = get_loss(lineage_copy, realimage)
-    gradient[3] = (f1 - f0) / delta
-    lineage_copy.frames[0].nodes[0].cell.length -= delta
+        f0 = get_loss(lineage_copy, realimage)
+        lineage_copy.frames[0].nodes[i].cell.length += delta
+        f1 = get_loss(lineage_copy, realimage)
+        gradient[i][3] = (f1 - f0) / delta
+        lineage_copy.frames[0].nodes[i].cell.length -= delta
 
-    f0 = get_loss(lineage_copy, realimage)
-    lineage_copy.frames[0].nodes[0].cell.width += delta
-    f1 = get_loss(lineage_copy, realimage)
-    gradient[4] = (f1 - f0) / delta
-    lineage_copy.frames[0].nodes[0].cell.width -= delta
+        f0 = get_loss(lineage_copy, realimage)
+        lineage_copy.frames[0].nodes[i].cell.width += delta
+        f1 = get_loss(lineage_copy, realimage)
+        gradient[i][4] = (f1 - f0) / delta
+        lineage_copy.frames[0].nodes[i].cell.width -= delta
 
     return gradient
+
+def modify_lineage(lineage, direction):
+    lineage_copy = deepcopy(lineage)
+    cell_cnt = len(lineage_copy.frames[0].nodes)
+    for i in range(cell_cnt):
+        lineage_copy.frames[0].nodes[i].cell.x += direction[i][0]
+        lineage_copy.frames[0].nodes[i].cell.y += direction[i][1]
+        lineage_copy.frames[0].nodes[i].cell.rotation += direction[i][2]
+        lineage_copy.frames[0].nodes[i].cell.length += direction[i][3]
+        lineage_copy.frames[0].nodes[i].cell.width += direction[i][4]
+    return lineage_copy
 
 # give you the lineage file of the current cells and the real image that you try to achieve
 # gradient descent can traverse through all of the current cells and perturb them towards the outcome
 def gradient_descent(lineage, realimage):
     loss = get_loss(lineage, realimage)
+    print("Loss before GD is:", loss)
+    show_synth_real(lineage, realimage)
     # get the gradient vector for x, y, rotation, length, width
     gradient = get_gradient(lineage, realimage)
-    print(gradient)
+    # print(gradient)
+    alpha = 0.1
+    direction = []
+    for i in range(len(gradient)):
+        direction.append([-1 * alpha * ele for ele in gradient[i]])
+    # direction = [-1 * alpha * ele for ele in gradient]
+    modified_lineage = modify_lineage(lineage, direction)
+    show_synth_real(modified_lineage, realimage)
+    new_loss = get_loss(modified_lineage, realimage)
+    print("Loss after one step of GD is:", new_loss)
     
 
 if __name__ == "__main__":
@@ -229,7 +260,7 @@ if __name__ == "__main__":
     print()
     gradient_descent(lineage, realimages[0])
 
-    
+    # synthimage, _ = optimization.generate_synthetic_image(lineage.frames[0].nodes, shape, lineage.frames[0].simulation_config)
     # plt.imshow(synthimage, cmap="gray")
     # plt.figure()
     # plt.imshow(realimages[0], cmap="gray")
