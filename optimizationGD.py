@@ -171,7 +171,7 @@ def show_synth_real(cellNodes, realimage):
 def get_gradient(cellNodes, realimage):
     nodes_copy = deepcopy(cellNodes)
     cell_cnt = len(nodes_copy)
-    gradient = np.array([[0]*5 for i in range(cell_cnt)], dtype=float)
+    gradient = np.array([[0]*5 for i in range(cell_cnt)], dtype=np.float64)
 
     delta = 0.1
     
@@ -201,10 +201,10 @@ def get_gradient(cellNodes, realimage):
         nodes_copy[i].cell.length -= delta
 
         f0 = get_loss(nodes_copy, realimage)
-        nodes_copy[i].cell.width += delta
+        nodes_copy[i].cell.width += delta *0.3
         f1 = get_loss(nodes_copy, realimage)
-        gradient[i][4] = (f1 - f0) / delta
-        nodes_copy[i].cell.width -= delta
+        gradient[i][4] = (f1 - f0) / (delta * 0.3)
+        nodes_copy[i].cell.width -= delta * 0.3
 
     return gradient
 
@@ -252,24 +252,28 @@ def gradient_descent(cellNodes, realimage):
     start_time = time.time()
     loss0 = get_loss(cellNodes, realimage)
     print("Loss before GD is:", loss0)
-    epoch = 20
-    
+    epoch = 50
+    show_synth_real(cellNodes, realimage)
     while True:
-        # show_synth_real(cellNodes, realimage)
+        
         gradient = get_gradient(cellNodes, realimage)
         # direction = np.array([-1 * normalize(v) for v in gradient])
         direction = -1 * gradient
+        
+        
         alpha = secant_method(cellNodes, realimage, direction)
         # print(direction)
-        # print(alpha)
+        print(alpha)
         step = alpha * direction
+        # print(step)
         # get the gradient vector for x, y, rotation, length, width
         cellNodes = modify_cells(cellNodes, step)
-        
+        # show_synth_real(cellNodes, realimage)
         loss1 = get_loss(cellNodes, realimage)
-        if abs(loss1 - loss0) < 0.01 or epoch <= 0:
+        if abs(loss1 - loss0) < 0.005 or epoch <= 0:
             break
         loss0 = loss1
+        # print(loss1)
         epoch -= 1
     show_synth_real(cellNodes, realimage)
     print("Loss after GD is:", loss1)
