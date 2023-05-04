@@ -79,10 +79,12 @@ def draw_arc(array, x, y, radius, theta0, theta1, color):
 
 meshgrids = {}
 def circle(x, y, radius, shape):
+    # print(radius)
     xl = floor(x - radius)
     xh = ceil(x + radius)
     yl = floor(y - radius)
     yh = ceil(y + radius)
+    # print(f"xh: {xh}, xl: {xl}, yl: {yl}, yh: {yh}")
     w = max(xh - xl, yh - yl)
     xh = xl + w
     yh = yl + w
