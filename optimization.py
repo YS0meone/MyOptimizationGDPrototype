@@ -79,7 +79,8 @@ def find_optimal_simulation_conf(simulation_config, realimage1, cellnodes):
 
 
 def generate_synthetic_image(cellnodes, shape, simulation_config):
-    image_type = simulation_config["image.type"]
+    # image_type = simulation_config["image.type"]
+    image_type = "graySynthetic"
     # print(image_type)
     cellmap = np.zeros(shape, dtype=int)
     if image_type == "graySynthetic" or image_type == "phaseContrast":
