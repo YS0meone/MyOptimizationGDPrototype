@@ -265,7 +265,7 @@ if __name__ == "__main__":
     print()
     gradient_descent(cellNodes, realimages[0])
 
-    
+    # synthimage, _ = optimization.generate_synthetic_image(lineage.frames[0].nodes, shape, lineage.frames[0].simulation_config)
     # plt.imshow(synthimage, cmap="gray")
     # plt.figure()
     # plt.imshow(realimages[0], cmap="gray")
