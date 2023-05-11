@@ -28,7 +28,7 @@ import matplotlib.pyplot as plt
 from copy import deepcopy
 
 DUMMY_CONFIG = {'image.type': 'graySynthetic', 'background.color': 0.39186227304616866, 'cell.color': 0.20192893848498444, \
-    'light.diffraction.sigma': 16.49986536658998, 'light.diffraction.strength': 0.4625857370407187, 'light.diffraction.truncate': 1, \
+    'light.diffraction.sigma': 5.49986536658998, 'light.diffraction.strength': 0.4625857370407187, 'light.diffraction.truncate': 1, \
         'cell.opacity': 0.28680135149498254, 'padding': 0}
 def parse_args():
     """Reads and parses the command-line arguments."""
@@ -263,7 +263,7 @@ def gradient_descent(cellNodes, realimage):
         
         alpha = secant_method(cellNodes, realimage, direction)
         # print(direction)
-        print(alpha)
+        # print(alpha)
         step = alpha * direction
         # print(step)
         # get the gradient vector for x, y, rotation, length, width
