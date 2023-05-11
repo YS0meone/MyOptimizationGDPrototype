@@ -28,7 +28,7 @@ import matplotlib.pyplot as plt
 from copy import deepcopy
 
 DUMMY_CONFIG = {'image.type': 'graySynthetic', 'background.color': 0.39186227304616866, 'cell.color': 0.20192893848498444, \
-    'light.diffraction.sigma': 16.49986536658998, 'light.diffraction.strength': 0.4625857370407187, 'light.diffraction.truncate': 1, \
+    'light.diffraction.sigma': 1, 'light.diffraction.strength': 0.4625857370407187, 'light.diffraction.truncate': 1, \
         'cell.opacity': 0.28680135149498254, 'padding': 0}
 def parse_args():
     """Reads and parses the command-line arguments."""
@@ -248,36 +248,40 @@ def normalize(v):
 
 # give you the lineage file of the current cells and the real image that you try to achieve
 # gradient descent can traverse through all of the current cells and perturb them towards the outcome
-def gradient_descent(cellNodes, realimage):
-    start_time = time.time()
-    loss0 = get_loss(cellNodes, realimage)
-    print("Loss before GD is:", loss0)
-    epoch = 50
-    show_synth_real(cellNodes, realimage)
-    while True:
-        
-        gradient = get_gradient(cellNodes, realimage)
-        # direction = np.array([-1 * normalize(v) for v in gradient])
-        direction = -1 * gradient
-        
-        
-        alpha = secant_method(cellNodes, realimage, direction)
-        # print(direction)
-        print(alpha)
-        step = alpha * direction
-        # print(step)
-        # get the gradient vector for x, y, rotation, length, width
-        cellNodes = modify_cells(cellNodes, step)
-        # show_synth_real(cellNodes, realimage)
-        loss1 = get_loss(cellNodes, realimage)
-        if abs(loss1 - loss0) < 0.005 or epoch <= 0:
-            break
-        loss0 = loss1
-        # print(loss1)
-        epoch -= 1
-    show_synth_real(cellNodes, realimage)
-    print("Loss after GD is:", loss1)
-    print(f"------running time {time.time() - start_time} seconds------")
+def gradient_descent(cellNodes, realimages):
+    # start_time = time.time()
+    for i in range(len(realimages)):
+        loss0 = get_loss(cellNodes, realimages[i])
+        print("Loss before GD is:", loss0)
+        epoch = 50
+        show_synth_real(cellNodes, realimages[i])
+        while True:
+            
+            gradient = get_gradient(cellNodes, realimages[i])
+            # direction = np.array([-1 * normalize(v) for v in gradient])
+            direction = -1 * gradient
+            
+            
+            # alpha = secant_method(cellNodes, realimages[i], direction)
+            alpha = 0.01
+            # print(direction)
+            # print(alpha)
+            step = alpha * direction
+            # print(step)
+            # get the gradient vector for x, y, rotation, length, width
+            cellNodes = modify_cells(cellNodes, step)
+            # show_synth_real(cellNodes, realimages[i])
+            loss1 = get_loss(cellNodes, realimages[i])
+            if loss1 == loss0:
+                continue
+            if abs(loss1 - loss0) < 0.003 or epoch <= 0:
+                break
+            loss0 = loss1
+            # print(loss1)
+            epoch -= 1
+        show_synth_real(cellNodes, realimages[i])
+        print("Loss after GD is:", loss1)
+    # print(f"------running time {time.time() - start_time} seconds------")
     
     
 
@@ -312,7 +316,7 @@ if __name__ == "__main__":
     # synthimage, _ = optimization.generate_synthetic_image(cellNodes, shape, DUMMY_CONFIG)
     # plt.imshow(synthimage, cmap="gray")
     # plt.show()
-    gradient_descent(cellNodes, realimages[0])
+    gradient_descent(cellNodes, realimages)
 
     # synthimage, _ = optimization.generate_synthetic_image(lineage.frames[0].nodes, shape, lineage.frames[0].simulation_config)
     # plt.imshow(synthimage, cmap="gray")

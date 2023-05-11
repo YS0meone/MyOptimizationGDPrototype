@@ -2,7 +2,7 @@ dir=$(pwd)
 cd ../..
 if python "./MyOptimizationGDPrototype/optimizationGD.py" \
     --frame_first 0 \
-    --frame_last 3 \
+    --frame_last 10 \
     --input "$dir/input/gray/frame%03d.png" \
     --bestfit "$dir/output/bestfit" \
     --output "$dir/output" \
