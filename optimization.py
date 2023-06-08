@@ -74,7 +74,7 @@ def find_optimal_simulation_conf(simulation_config, realimage1, cellnodes):
             for node in cellnodes:
                 node.cell.opacity = simulation_config["cell.opacity"]
 
-    print(f"optimal simulation configuration values found: {simulation_config}")
+    print(simulation_config)
     return simulation_config
 
 

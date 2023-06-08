@@ -19,7 +19,7 @@
     // All settings should be floats.
     "simulation":
     {
-        "image.type": "graySynthetic", 
+        "image.type": "To be Set", 
         "background.color": 0.39186227304616866, // 0.39 for gary scale image
         "cell.color" : 0.20192893848498444, // 0.15 for gray scale image
         "light.diffraction.sigma": 16.49986536658998,  //11
@@ -42,16 +42,16 @@
         "prob.width":0.1,
         "prob.length":0.2,
         "prob.rotation":0.2,
-        "modification.x.mu":0.0,
-        "modification.y.mu":0.0,
-        "modification.width.mu":0.0,
-        "modification.length.mu":0.0,
-        "modification.rotation.mu":0.0,
-        "modification.x.sigma":0.5,
-        "modification.y.sigma":0.5,
-        "modification.width.sigma":0.1,
-        "modification.length.sigma":1.0,
-        "modification.rotation.sigma":0.2,
+        "modification.x.mu": 0.0,
+        "modification.y.mu": 0.0,
+        "modification.width.mu": 0.0,
+        "modification.length.mu": 0.0,
+        "modification.rotation.mu": 0.0,
+        "modification.x.sigma": 1000.0,
+        "modification.y.sigma": 1000.0,
+        "modification.width.sigma": 200.0,
+        "modification.length.sigma": 2000.0,
+        "modification.rotation.sigma": 400.0,
         "prob.opacity": 0.2,
         "modification.opacity.mu":0.0,
         "modification.opacity.sigma":0.001
